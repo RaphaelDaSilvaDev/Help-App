@@ -1,7 +1,9 @@
 package com.raphaelsilva.help.app.controller
 
 import com.raphaelsilva.help.app.dto.form.UserForm
+import com.raphaelsilva.help.app.dto.form.UserLikeAnswer
 import com.raphaelsilva.help.app.dto.form.UserUpdateForm
+import com.raphaelsilva.help.app.dto.view.UserLikeView
 import com.raphaelsilva.help.app.dto.view.UserView
 import com.raphaelsilva.help.app.service.UserService
 import jakarta.validation.Valid
@@ -49,5 +51,20 @@ class UserController(private val userService: UserService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteUser(@PathVariable id: Long){
         userService.deleteUser(id)
+    }
+
+    @GetMapping("/like/{id}")
+    fun getAllUserLikes(@PathVariable id: Long): UserLikeView{
+        return userService.getAllUserLikes(id)
+    }
+
+    @GetMapping("/like/post/{id}/{postId}")
+    fun getUserLikesByPost(@PathVariable id: Long, @PathVariable postId: Long): UserLikeView{
+        return userService.getUserLikesByPost(id, postId)
+    }
+
+    @GetMapping("/like/answer")
+    fun getUserLikesByAnswer(@RequestBody userLikeAnswer: UserLikeAnswer): UserLikeView{
+        return userService.getUserLikeAnswerChild(userLikeAnswer)
     }
 }

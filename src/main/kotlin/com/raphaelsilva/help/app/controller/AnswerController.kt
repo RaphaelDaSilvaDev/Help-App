@@ -1,15 +1,20 @@
 package com.raphaelsilva.help.app.controller
 
 import com.raphaelsilva.help.app.dto.form.AnswerForm
+import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
+import com.raphaelsilva.help.app.dto.view.AnswerLikeView
 import com.raphaelsilva.help.app.dto.view.AnswerWithChildrenCountView
-import com.raphaelsilva.help.app.dto.view.AnswerWithChildrenView
 import com.raphaelsilva.help.app.service.AnswerService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -30,8 +35,26 @@ class AnswerController(private val answerService: AnswerService) {
     }
 
     @GetMapping("/post/{postId}")
-    fun getByPostId(@PathVariable postId: Long): List<AnswerWithChildrenView>{
+    fun getByPostId(@PathVariable postId: Long): List<AnswerWithChildrenCountView>{
         return answerService.getByPostId(postId)
     }
 
+    @GetMapping("/father/{answerId}")
+    fun getAnswerByAnswerFather(@PathVariable answerId: Long): List<AnswerWithChildrenCountView>{
+        return answerService.getAnswerByAnswerFather(answerId)
+    }
+
+    @PutMapping("/like")
+    fun addLike(@RequestBody answerLikeForm: AnswerLikeForm, uriBuilder: UriComponentsBuilder):
+            ResponseEntity<AnswerLikeView> {
+        val like = answerService.addLike(answerLikeForm)
+        val uri = uriBuilder.path("/like").build().toUri()
+        return ResponseEntity.created(uri).body(like)
+    }
+
+    @DeleteMapping("/like")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun removeLike(@RequestBody answerLikeForm: AnswerLikeForm){
+        answerService.removeLike(answerLikeForm)
+    }
 }

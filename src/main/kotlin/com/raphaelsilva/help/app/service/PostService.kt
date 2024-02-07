@@ -6,29 +6,43 @@ import com.raphaelsilva.help.app.exception.NotFoundException
 import com.raphaelsilva.help.app.mapper.post.PostFormMapper
 import com.raphaelsilva.help.app.mapper.post.PostViewMapper
 import com.raphaelsilva.help.app.model.Post
+import com.raphaelsilva.help.app.model.PostStatus
+import com.raphaelsilva.help.app.repository.AnswerRepository
 import com.raphaelsilva.help.app.repository.PostRepository
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
 
 @Service
 class PostService(
-    private var postRepository: PostRepository,
+    private val postRepository: PostRepository,
+    private val answerRepository: AnswerRepository,
     private val postFormMapper: PostFormMapper,
     private val postViewMapper: PostViewMapper,
     private val notFoundMessage: String = "Post not found!"
 ) {
-    fun create(postForm: PostForm): Post {
+    fun create(postForm: PostForm): PostView {
         val post = postFormMapper.map(postForm)
         postRepository.save(post)
-        return post
+        return postViewMapper.map(post)
     }
 
     fun getAll(): List<PostView> {
-        return postRepository.findAll().stream().map { post -> postViewMapper.map(post) }.collect(Collectors.toList())
+        val posts = postRepository.findAll().stream().map { post -> postViewMapper.map(post) }.collect(Collectors.toList())
+        posts.forEach { post ->
+            post.answerQuantity = post.id?.let { answerRepository.getAllByPostId(it).size }
+        }
+
+        return posts
     }
 
     fun getById(id: Long): Post {
         return postRepository.findById(id).orElseThrow{ NotFoundException(notFoundMessage) }
+    }
+
+    fun changeStatus(status: PostStatus, postId: Long): Post{
+        val post = getById(postId)
+        post.status = status
+        return postRepository.save(post)
     }
 
 

@@ -5,5 +5,5 @@ interface Mapper<T, U>  {
 }
 
 interface SpecialMapper<T,C,U> {
-    fun map(t: T, c: C?): U
+    fun map(t: T, c: C): U
 }

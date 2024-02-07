@@ -1,11 +1,6 @@
 package com.raphaelsilva.help.app.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
@@ -17,8 +12,12 @@ data class Answer (
     @Column(nullable = false)
     val message: String = "",
 
-    @Column(nullable = false)
-    val likes: Int = 0,
+    @ManyToMany
+    @JoinTable(
+        name = "answer_like",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "answer_id")])
+    var likes: List<User> = ArrayList(),
 
     @ManyToOne
     val author: User? = null,
@@ -26,9 +25,8 @@ data class Answer (
     @ManyToOne
     val post: Post? = null,
 
-
     @ManyToOne
-    val answer: Answer? = null,
+    var answer: Answer? = null,
 
     @Column(nullable = false)
     val isSolution: Boolean = false,

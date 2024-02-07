@@ -13,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class PostController(private val postService: PostService) {
 
     @PostMapping
-    fun createPost(@RequestBody postForm: PostForm, uriBuilder: UriComponentsBuilder): ResponseEntity<Post> {
+    fun createPost(@RequestBody postForm: PostForm, uriBuilder: UriComponentsBuilder): ResponseEntity<PostView> {
         val post = postService.create(postForm)
         val uri = uriBuilder.path("/api/post/${post.id}").build().toUri()
         return ResponseEntity.created(uri).body(post)

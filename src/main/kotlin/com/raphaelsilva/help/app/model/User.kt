@@ -16,4 +16,7 @@ data class User (
 
         @Column(nullable = false)
         var password: String = "",
+
+        @ManyToMany(mappedBy = "likes")
+        val likedAnswers: List<Answer> = ArrayList()
 )

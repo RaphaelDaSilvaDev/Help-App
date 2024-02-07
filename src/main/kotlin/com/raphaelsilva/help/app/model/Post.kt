@@ -27,5 +27,5 @@ data class Post(
     val createdBy: User? = null,
 
     @Enumerated(value = EnumType.STRING)
-    val status: PostStatus = PostStatus.NOT_ANSWER
+    var status: PostStatus = PostStatus.NOT_ANSWER
 )

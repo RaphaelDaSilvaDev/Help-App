@@ -15,7 +15,8 @@ class PostViewMapper(
             id = t.id,
             title = t.title,
             tags = t.tags,
-            createdBy = userService.getUserById(t.id!!),
+            status = t.status,
+            createdBy = userService.getUserById(t.createdBy?.id!!),
             createdAt = t.createdAt
         )
     }

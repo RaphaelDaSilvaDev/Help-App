@@ -14,13 +14,12 @@ import org.springframework.stereotype.Component
 class AnswerFormMapper(
     private val userService: UserService,
     private val postService: PostService,
-): SpecialMapper<AnswerForm, Answer, Answer> {
-    override fun map(t: AnswerForm, c: Answer?): Answer {
+): Mapper<AnswerForm, Answer> {
+    override fun map(t: AnswerForm): Answer {
         return Answer(
             message = t.message,
             author = userService.getUserByIdPure(t.authorId),
             post = postService.getById(t.postId),
-            answer = c
         )
     }
 

@@ -11,7 +11,7 @@ class AnswerSimpleViewMapper: Mapper<Answer, AnswerSimpleView> {
         return AnswerSimpleView(
             id = t.id!!,
             message = t.message,
-            likes = t.likes,
+            likes = t.likes.size,
             postId = t.post?.id!!,
             authorId = t.author?.id!!,
             isSolution = t.isSolution,
