@@ -1,9 +1,11 @@
 name: Automerge
 
 on:
-  push:
-    branches: [ developer ]
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - closed
 
 env:
   MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
