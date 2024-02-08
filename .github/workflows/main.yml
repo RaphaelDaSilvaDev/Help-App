@@ -4,16 +4,10 @@ on:
     branches: [developer]
     types: [closed]
 jobs:
-  merge-master-back-to-dev:
-    if: github.event.pull_request.merged == true
-    timeout-minutes: 2
+  merge-developer-to-master:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set Git config
-      run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "Github Actions"
+    - uses: actions/checkout@master
     - name: Merge master back to dev
       run: |
           git fetch --unshallow
