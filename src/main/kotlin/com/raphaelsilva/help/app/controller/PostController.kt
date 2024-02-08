@@ -4,6 +4,10 @@ import com.raphaelsilva.help.app.dto.form.PostForm
 import com.raphaelsilva.help.app.dto.view.PostView
 import com.raphaelsilva.help.app.model.Post
 import com.raphaelsilva.help.app.service.PostService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
@@ -20,8 +24,10 @@ class PostController(private val postService: PostService) {
     }
 
     @GetMapping
-    fun getAllPost(): List<PostView> {
-        return postService.getAll()
+    fun getAllPost(@PageableDefault(size = 10, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable:
+                   Pageable):
+            Page<PostView> {
+        return postService.getAll(pageable)
     }
 
     @GetMapping("/{id}")
