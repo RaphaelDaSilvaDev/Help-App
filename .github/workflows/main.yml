@@ -6,7 +6,7 @@ on:
     types: [closed]
     
 env:
-  MY_REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
+  MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
   MY_BRANCH: developer
   
 jobs:
