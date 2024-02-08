@@ -1,4 +1,4 @@
-name: Marge Developer into Master
+name: Automerge
 
 on:
   pull_request:
