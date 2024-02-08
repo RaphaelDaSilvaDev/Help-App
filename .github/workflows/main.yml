@@ -1,19 +1,23 @@
-name: Marge Developer into Master
-
-on:
+name: Auto-merge develoepr to master
+on: 
   pull_request:
     branches: [developer]
     types: [closed]
-
 jobs:
-  merge:
+  merge-master-back-to-dev:
+    if: github.event.pull_request.merged == true
+    timeout-minutes: 2
     runs-on: ubuntu-latest
-
     steps:
-    - name: Merge developer to master
+    - uses: actions/checkout@v2
+    - name: Set Git config
       run: |
-        git fetch --unshallow
-        git checkout master
-        git pull
-        git merge --no-ff developer -m "Auto-merge developer to master"
-        git push
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+    - name: Merge master back to dev
+      run: |
+          git fetch --unshallow
+          git checkout developer
+          git pull
+          git merge --no-ff developer -m "Auto-merge develoepr to master"
+          git push
