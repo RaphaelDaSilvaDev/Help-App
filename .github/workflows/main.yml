@@ -1,0 +1,19 @@
+name: Marge Developer into Master
+
+on:
+  pull_request:
+    branches: [developer]
+    types: [closed]
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Merge developer to master
+      run: |
+        git fetch --unshallow
+        git checkout master
+        git pull
+        git merge --no-ff developer -m "Auto-merge developer to master"
+        git push
