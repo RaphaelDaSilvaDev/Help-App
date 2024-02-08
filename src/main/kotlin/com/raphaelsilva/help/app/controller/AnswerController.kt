@@ -4,6 +4,7 @@ import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
 import com.raphaelsilva.help.app.dto.view.AnswerLikeView
 import com.raphaelsilva.help.app.dto.view.AnswerWithChildrenCountView
+import com.raphaelsilva.help.app.dto.view.UserUnlikeView
 import com.raphaelsilva.help.app.service.AnswerService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -45,16 +46,13 @@ class AnswerController(private val answerService: AnswerService) {
     }
 
     @PutMapping("/like")
-    fun addLike(@RequestBody answerLikeForm: AnswerLikeForm, uriBuilder: UriComponentsBuilder):
-            ResponseEntity<AnswerLikeView> {
-        val like = answerService.addLike(answerLikeForm)
-        val uri = uriBuilder.path("/like").build().toUri()
-        return ResponseEntity.created(uri).body(like)
-    }
-
-    @DeleteMapping("/like")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun removeLike(@RequestBody answerLikeForm: AnswerLikeForm){
-        answerService.removeLike(answerLikeForm)
+    fun addLike(@RequestBody answerLikeForm: AnswerLikeForm, uriBuilder: UriComponentsBuilder): Any {
+        val like = answerService.likeController(answerLikeForm)
+        if(like != null){
+            val uri = uriBuilder.path("/like").build().toUri()
+            return ResponseEntity.created(uri).body(like)
+        }
+        return ResponseEntity.ok().body(UserUnlikeView(message = "Unliked", userId = answerLikeForm.authorId,
+                                                       answerId = answerLikeForm.answerId))
     }
 }

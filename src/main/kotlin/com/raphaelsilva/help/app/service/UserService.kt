@@ -53,21 +53,16 @@ class UserService(
         userRepository.deleteById(id)
     }
 
-    fun getAllUserLikes(id: Long): UserLikeView {
-        val userLikes = userRepository.findById(id).orElseThrow{NotFoundException(notFoundMessage)}
-        return userLikeViewMapper.map(userLikes.likedAnswers)
-    }
-
-    fun getUserLikesByPost(userId: Long, postId: Long): UserLikeView{
+    fun getAllUserLikes(userId: Long, postId: Long?, answerId: Long?): UserLikeView {
         val userLikes = userRepository.findById(userId).orElseThrow{NotFoundException(notFoundMessage)}
-        val userLikesPost = userLikes.likedAnswers.filter { answer ->  answer.post?.id == postId && answer.answer?.id== null }
-        return userLikeViewMapper.map(userLikesPost)
-    }
-
-    fun getUserLikeAnswerChild(userLikeAnswer: UserLikeAnswer): UserLikeView{
-        val userLikes = userRepository.findById(userLikeAnswer.userId).orElseThrow{NotFoundException(notFoundMessage)}
-        val userLikesPost = userLikes.likedAnswers.filter { answer ->  answer.post?.id == userLikeAnswer.postId &&
-                answer.answer?.id==userLikeAnswer.answerId}
-        return userLikeViewMapper.map(userLikesPost)
+        if(postId != null && answerId != null){
+            val userLikesPost = userLikes.likedAnswers.filter { answer ->  answer.post?.id == postId &&
+                    answer.answer?.id==answerId}
+            return userLikeViewMapper.map(userLikesPost)
+        }else if(postId != null){
+            val userLikesPost = userLikes.likedAnswers.filter { answer ->  answer.post?.id == postId && answer.answer?.id== null }
+            return userLikeViewMapper.map(userLikesPost)
+        }
+        return userLikeViewMapper.map(userLikes.likedAnswers)
     }
 }

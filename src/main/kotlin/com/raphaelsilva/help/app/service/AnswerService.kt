@@ -13,7 +13,6 @@ import com.raphaelsilva.help.app.mapper.answer.AnswerLikeViewMapper
 import com.raphaelsilva.help.app.mapper.answer.AnswerSimpleViewMapper
 import com.raphaelsilva.help.app.model.Answer
 import com.raphaelsilva.help.app.model.PostStatus
-import com.raphaelsilva.help.app.model.User
 import com.raphaelsilva.help.app.repository.AnswerRepository
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
@@ -49,7 +48,7 @@ class AnswerService(
     }
 
     fun getAllChildrenById(id: Long): List<AnswerSimpleView> {
-        return answerRepository.getAllAnswerChildren(id).stream().map { answer ->
+        return answerRepository.findAllByAnswerId(id).stream().map { answer ->
             answerSimpleViewMapper.map(answer)
         }.collect(Collectors.toList())
     }
@@ -70,7 +69,7 @@ class AnswerService(
     }
 
     fun getAnswerByAnswerFather(id: Long): List<AnswerWithChildrenCountView> {
-        val answer = answerRepository.getAnswerByAnswerFather(id).stream().map { answer ->
+        val answer = answerRepository.findAllByAnswerId(id).stream().map { answer ->
             val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
             answersChildren?.let { child ->
                 val answersWhitChildren = AnswerWithChildren(answer, child)
@@ -80,9 +79,11 @@ class AnswerService(
         return answer
     }
 
-    fun addLike(answerLikeForm: AnswerLikeForm): AnswerLikeView {
+    fun likeController(answerLikeForm: AnswerLikeForm): AnswerLikeView? {
         val answer = getByIdPure(answerLikeForm.answerId)
         val user = userService.getUserByIdPure(answerLikeForm.authorId)
+        val hasLike = answer.likes.find { u -> u.id == user.id }
+        if (hasLike == null) {
             val updatedAnswer = Answer(
                 id = answer.id,
                 message = answer.message,
@@ -95,9 +96,9 @@ class AnswerService(
             )
             answerRepository.save(updatedAnswer)
             return answerLikeViewMapper.map(answerSimpleViewMapper.map(updatedAnswer), user)
+        } else {
+            answerRepository.deleteLike(answerLikeForm.authorId, answerLikeForm.answerId)
+            return null
         }
-
-    fun removeLike(answerLikeForm: AnswerLikeForm){
-        answerRepository.deleteLike(answerLikeForm.authorId, answerLikeForm.answerId)
     }
 }

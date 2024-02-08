@@ -6,14 +6,10 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface AnswerRepository: JpaRepository<Answer, Long> {
-    @Query(value = "SELECT * FROM Answer WHERE answer_id = ?1", nativeQuery = true)
-    fun getAllAnswerChildren(id: Long): List<Answer>
+    fun findAllByAnswerId(id: Long): List<Answer>
 
     @Query(value = "SELECT * FROM Answer WHERE post_id = ?1 AND answer_id IS NULL", nativeQuery = true)
     fun getAllByPostId(postId: Long): List<Answer>
-
-    @Query(value = "SELECT * FROM Answer WHERE answer_id = ?1", nativeQuery = true)
-    fun getAnswerByAnswerFather(id: Long): List<Answer>
 
     @Modifying
     @org.springframework.transaction.annotation.Transactional
