@@ -1,17 +1,16 @@
-name: Auto-merge develoepr to master
-on: 
+name: Merge branch with labeled
+on:
   pull_request:
-    branches: [developer]
-    types: [closed]
+    types: [labeled]
 jobs:
-  merge-developer-to-master:
+  merge-branch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Merge master back to dev
-      run: |
-          git fetch --unshallow
-          git checkout developer
-          git pull
-          git merge --no-ff developer -m "Auto-merge develoepr to master"
-          git push
+      - uses: actions/checkout@master
+
+      - name: Merge by labeled
+        uses: devmasx/merge-branch@master
+        with:
+          label_name: 'merged in develop'
+          target_branch: 'develop'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
