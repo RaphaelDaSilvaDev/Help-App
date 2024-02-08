@@ -4,16 +4,21 @@ on:
   pull_request:
     branches: [developer]
     types: [closed]
-
+    
+env:
+  MY_REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
+  MY_BRANCH: developer
+  
 jobs:
   merge:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Merge developer to master
+    - name: Merge with master
       run: |
-        git fetch --unshallow
-        git checkout master
-        git pull
-        git merge --no-ff developer -m "Auto-merge developer to master"
-        git push
+        git clone ${{env.MY_REPO}} tmp
+        cd tmp
+        git config user.name "Automerge Developer to Master by Bot"
+        git config user.email "bot@example.com"
+        git config pull.rebase false
+        git merge #{{env.MY_BRANCH}}
