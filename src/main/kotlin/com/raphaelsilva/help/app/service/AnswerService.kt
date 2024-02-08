@@ -14,6 +14,8 @@ import com.raphaelsilva.help.app.mapper.answer.AnswerSimpleViewMapper
 import com.raphaelsilva.help.app.model.Answer
 import com.raphaelsilva.help.app.model.PostStatus
 import com.raphaelsilva.help.app.repository.AnswerRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
 
@@ -47,8 +49,8 @@ class AnswerService(
         return answerWhitQuantityViewMapper.map(answerWithChildren)
     }
 
-    fun getAllChildrenById(id: Long): List<AnswerSimpleView> {
-        return answerRepository.findAllByAnswerId(id).stream().map { answer ->
+    fun getAllChildrenById(id: Long, pageable: Pageable? = null): List<AnswerSimpleView> {
+        return answerRepository.findAllByAnswerId(id, pageable).stream().map { answer ->
             answerSimpleViewMapper.map(answer)
         }.collect(Collectors.toList())
     }
@@ -57,25 +59,25 @@ class AnswerService(
         return answerRepository.findById(id).orElseThrow { NotFoundException(notFoundMessage) }
     }
 
-    fun getByPostId(postId: Long): List<AnswerWithChildrenCountView> {
-        val answer = answerRepository.getAllByPostId(postId).stream().map { answer ->
+    fun getByPostId(postId: Long, pageable: Pageable): Page<AnswerWithChildrenCountView> {
+        val answer = answerRepository.getAllByPostIdPageable(postId, pageable).map { answer ->
             val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
             answersChildren?.let { child ->
                 val answersWhitChildren = AnswerWithChildren(answer, child)
                 answerWhitQuantityViewMapper.map(answersWhitChildren)
             }
-        }.collect(Collectors.toList())
+        }
         return answer
     }
 
-    fun getAnswerByAnswerFather(id: Long): List<AnswerWithChildrenCountView> {
-        val answer = answerRepository.findAllByAnswerId(id).stream().map { answer ->
+    fun getAnswerByAnswerFather(id: Long, pageable: Pageable): Page<AnswerWithChildrenCountView> {
+        val answer = answerRepository.findAllByAnswerId(id, pageable).map { answer ->
             val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
             answersChildren?.let { child ->
                 val answersWhitChildren = AnswerWithChildren(answer, child)
                 answerWhitQuantityViewMapper.map(answersWhitChildren)
             }
-        }.collect(Collectors.toList())
+        }
         return answer
     }
 
