@@ -21,4 +21,4 @@ jobs:
         git config user.name "Automerge Developer to Master by Bot"
         git config user.email "bot@example.com"
         git config pull.rebase false
-        git merge #{{env.MY_BRANCH}}
+        git merge ${{env.MY_BRANCH}}
