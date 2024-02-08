@@ -1,43 +1,24 @@
 name: Automerge
 
 on:
-<<<<<<< HEAD
-  push:
-    branches:
-      - developer
-    
-env:
-  MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
-  MY_BRANCH: developer
-  MASTER_REPO: https://github.com/RaphaelDaSilvaDev/Help-App-Api
-  MASTER_BRANCH: master
-  
-=======
   pull_request:
     branches: [developer]
     types: [closed]
-
->>>>>>> 9540f64 (Create main.yml)
+    
+env:
+  MY_REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
+  MY_BRANCH: developer
+  
 jobs:
   merge:
     runs-on: ubuntu-latest
 
     steps:
-<<<<<<< HEAD
     - name: Merge with master
       run: |
         git clone ${{env.MY_REPO}} tmp
         cd tmp
-        git config user.name "RaphaelDaSilvaDev"
-        git config user.email "raphael.h.silva@protonmail.com"
+        git config user.name "Automerge Developer to Master by Bot"
+        git config user.email "bot@example.com"
         git config pull.rebase false
-        git pull ${{env.MASTER_REPO}} ${{env.MY_BRANCH}}
-=======
-    - name: Merge developer to master
-      run: |
-        git fetch --unshallow
-        git checkout master
-        git pull
-        git merge --no-ff developer -m "Auto-merge developer to master"
->>>>>>> 9540f64 (Create main.yml)
-        git push
+        git merge #{{env.MY_BRANCH}}
