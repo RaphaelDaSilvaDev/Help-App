@@ -2,31 +2,18 @@ name: Automerge
 
 on:
   pull_request:
-    branches:
-      - develop
-    types:
-      - closed
-
-env:
-  MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
-
-  MY_BRANCH: developer
-
-  MASTER_REPO: https://github.com/RaphaelDaSilvaDev/Help-App-Api.git
-
-  MASTER_BRANCH: master
+    branches: [developer]
+    types: [closed]
 
 jobs:
   merge:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Merge with master
+    - name: Merge developer to master
       run: |
-        git clone ${{env.MY_REPO}} -b ${{env.MY_BRANCH}} tmp
-        cd tmp
-        git config user.name "RaphaelDaSilvaDev"
-        git config user.email "raphael.h.silva@protonmail.com"
-        git config pull.rebase false
-        git pull ${{env.MASTER_REPO}} ${{env.MASTER_BRANCH}}
+        git fetch --unshallow
+        git checkout master
+        git pull
+        git merge --no-ff developer -m "Auto-merge developer to master"
         git push
