@@ -9,8 +9,9 @@ import com.raphaelsilva.help.app.model.Post
 import com.raphaelsilva.help.app.model.PostStatus
 import com.raphaelsilva.help.app.repository.AnswerRepository
 import com.raphaelsilva.help.app.repository.PostRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.util.stream.Collectors
 
 @Service
 class PostService(
@@ -26,8 +27,8 @@ class PostService(
         return postViewMapper.map(post)
     }
 
-    fun getAll(): List<PostView> {
-        val posts = postRepository.findAll().stream().map { post -> postViewMapper.map(post) }.collect(Collectors.toList())
+    fun getAll(pageable: Pageable): Page<PostView> {
+        val posts = postRepository.findAll(pageable).map { post -> postViewMapper.map(post) }
         posts.forEach { post ->
             post.answerQuantity = post.id?.let { answerRepository.getAllByPostId(it).size }
         }
