@@ -15,7 +15,7 @@ class SecurityConfiguration {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeHttpRequests {
-            it.requestMatchers(HttpMethod.POST, "/api/post").hasAuthority("admin")
+            it.requestMatchers(HttpMethod.POST, "/api/post").authenticated()
         }.authorizeHttpRequests {
             it.requestMatchers(HttpMethod.POST, "/api/answer").authenticated()
         }.authorizeHttpRequests {
