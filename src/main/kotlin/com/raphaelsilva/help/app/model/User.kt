@@ -1,6 +1,7 @@
 package com.raphaelsilva.help.app.model
 
 import jakarta.persistence.*
+import org.springframework.security.core.GrantedAuthority
 
 @Entity(name = "users")
 data class User (
@@ -22,4 +23,6 @@ data class User (
 
         @Enumerated(value = EnumType.STRING)
         val role: Roles = Roles.USER
-)
+): GrantedAuthority {
+        override fun getAuthority() = role.name
+}
