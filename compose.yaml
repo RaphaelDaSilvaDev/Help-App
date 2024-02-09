@@ -1,0 +1,36 @@
+services:
+  database:
+    image: 'postgres:15.2'
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_USER=helpapp'
+      - 'POSTGRES_DB=helpapp'
+      - 'POSTGRES_PASSWORD=1234'
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@host.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - '5050:5050'
+    links:
+      - database
+    depends_on:
+      - database
+
+  api:
+    build:
+      context: .
+    container_name: help-api
+    volumes:
+      - ./:/app
+    command: ./gradlew bootRun
+    ports:
+      - "8080:8080"
+    links:
+      - database
+    depends_on:
+      - database
