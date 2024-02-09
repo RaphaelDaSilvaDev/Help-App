@@ -7,7 +7,7 @@ on:
     
 env:
   MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
-  MY_BRANCH: origin/developer
+  MY_BRANCH: origin developer
   MASTER_REPO: https://github.com/RaphaelDaSilvaDev/Help-App-Api
   MASTER_BRANCH: master
   
