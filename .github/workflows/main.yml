@@ -1,13 +1,15 @@
 name: Automerge
 
 on:
-  pull_request:
-    branches: [developer]
-    types: [closed]
+  push:
+    branches:
+      - developer
     
 env:
   MY_REPO: https://RaphaelDaSilvaDev:${{secrets.GITHUB_TOKEN}}@github.com/RaphaelDaSilvaDev/Help-App-Api.git
   MY_BRANCH: origin/developer
+  MASTER_REPO: https://github.com/RaphaelDaSilvaDev/Help-App-Api
+  MASTER_BRANCH: master
   
 jobs:
   merge:
@@ -18,7 +20,8 @@ jobs:
       run: |
         git clone ${{env.MY_REPO}} tmp
         cd tmp
-        git config user.name "Automerge Developer to Master by Bot"
+        git config user.name "Automerge Bot"
         git config user.email "bot@example.com"
         git config pull.rebase false
-        git merge ${{env.MY_BRANCH}}
+        git pull ${{env.MASTER_REPO}} ${{env.MY_BRANCH}}
+        git push
