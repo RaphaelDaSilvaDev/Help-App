@@ -18,5 +18,8 @@ data class User (
         var password: String = "",
 
         @ManyToMany(mappedBy = "likes")
-        val likedAnswers: List<Answer> = ArrayList()
+        val likedAnswers: List<Answer> = ArrayList(),
+
+        @Enumerated(value = EnumType.STRING)
+        val role: Roles = Roles.USER
 )
