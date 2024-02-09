@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	implementation 'org.flywaydb:flyway-core'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation "org.springframework.boot:spring-boot-docker-compose"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
