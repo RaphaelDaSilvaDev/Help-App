@@ -11,6 +11,8 @@ import com.raphaelsilva.help.app.mapper.user.UserLikeViewMapper
 import com.raphaelsilva.help.app.mapper.user.UserViewMapper
 import com.raphaelsilva.help.app.model.User
 import com.raphaelsilva.help.app.repository.UserRepository
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
 
@@ -21,7 +23,7 @@ class UserService(
         private val userViewMapper: UserViewMapper,
         private val userLikeViewMapper: UserLikeViewMapper,
         private val notFoundMessage: String = "User not found!"
-) {
+): UserDetailsService {
     fun create(userForm: UserForm): UserView {
         val user = userFormMapper.map(userForm)
         userRepository.save(user)
@@ -64,5 +66,10 @@ class UserService(
             return userLikeViewMapper.map(userLikesPost)
         }
         return userLikeViewMapper.map(userLikes.likedAnswers)
+    }
+
+    override fun loadUserByUsername(username: String?): UserDetails {
+        val user = userRepository.findByEmail(username) ?: throw NotFoundException(notFoundMessage)
+        return UserDetail(user)
     }
 }
