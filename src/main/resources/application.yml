@@ -13,3 +13,5 @@ spring:
   devtools:
     remote:
       secret: mysecret
+  jaxb:
+    enabled: true
