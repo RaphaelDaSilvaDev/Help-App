@@ -4,6 +4,8 @@ import com.raphaelsilva.help.app.dto.form.RoleForm
 import com.raphaelsilva.help.app.dto.view.RoleView
 import com.raphaelsilva.help.app.model.Roles
 import com.raphaelsilva.help.app.service.RoleService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,5 +33,11 @@ class RoleController(
     fun getRoleById(@PathVariable id: Long): ResponseEntity<RoleView>{
         val role = roleService.getRoleById(id)
         return ResponseEntity.ok().body(role)
+    }
+
+    @GetMapping
+    fun getAllRole(pageable: Pageable): Page<RoleView>{
+        val roles = roleService.getAll(pageable)
+        return roles
     }
 }
