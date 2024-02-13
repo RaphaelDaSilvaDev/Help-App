@@ -2,6 +2,7 @@ package com.raphaelsilva.help.app.exception
 
 import com.raphaelsilva.help.app.dto.view.ErrorView
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -45,6 +46,17 @@ class ExceptionHandler {
             status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             error = HttpStatus.INTERNAL_SERVER_ERROR.name,
             message = exception.toString(),
+            path = request.servletPath
+        )
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleEmptyError(exception: EmptyResultDataAccessException, request: HttpServletRequest): ErrorView{
+        return ErrorView(
+            status = HttpStatus.NOT_FOUND.value(),
+            error = HttpStatus.NOT_FOUND.name,
+            message = "Not Found!",
             path = request.servletPath
         )
     }
