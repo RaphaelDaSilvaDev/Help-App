@@ -50,4 +50,9 @@ class RoleController(
     fun deleteRole(@PathVariable id: Long){
         roleService.deleteRole(id)
     }
+
+    @GetMapping("/by-name")
+    fun getRoleByName(@RequestBody roleForm: RoleForm): RoleView{
+        return roleService.getRoleByName(roleForm)
+    }
 }
