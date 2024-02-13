@@ -14,6 +14,7 @@ data class Roles(
     val id: Long? = null,
     @Column(unique = true)
     val name: String = ""
+  
 ): GrantedAuthority {
     override fun getAuthority() = name
 }
