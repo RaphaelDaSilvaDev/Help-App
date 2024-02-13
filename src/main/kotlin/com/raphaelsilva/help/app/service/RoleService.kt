@@ -32,4 +32,8 @@ class RoleService(
         val roles = roleRepository.findAll(pageable).map { role -> roleViewMapper.map(role) }
         return roles
     }
+
+    fun deleteRole(id: Long) {
+        roleRepository.deleteById(id)
+    }
 }
