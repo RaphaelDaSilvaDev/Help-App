@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -58,5 +60,11 @@ class AnswerController(private val answerService: AnswerService) {
                 message = "Unliked", userId = answerLikeForm.authorId, answerId = answerLikeForm.answerId
             )
         )
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteAnswer(@PathVariable id: Long, @AuthenticationPrincipal username: String){
+        answerService.delete(id, username)
     }
 }

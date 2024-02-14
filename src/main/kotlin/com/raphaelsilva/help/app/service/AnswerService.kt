@@ -14,6 +14,7 @@ import com.raphaelsilva.help.app.mapper.answer.AnswerSimpleViewMapper
 import com.raphaelsilva.help.app.model.Answer
 import com.raphaelsilva.help.app.model.PostStatus
 import com.raphaelsilva.help.app.repository.AnswerRepository
+import io.jsonwebtoken.lang.Collections
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -81,6 +82,17 @@ class AnswerService(
         return answer
     }
 
+    fun getAnswerByAnswerFatherPure(id: Long): List<AnswerWithChildrenCountView> {
+        val answer = answerRepository.findAllByAnswerId(id).stream().map { answer ->
+            val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
+            answersChildren?.let { child ->
+                val answersWhitChildren = AnswerWithChildren(answer, child)
+                answerWhitQuantityViewMapper.map(answersWhitChildren)
+            }
+        }.collect(Collectors.toList())
+        return answer
+    }
+
     fun likeController(answerLikeForm: AnswerLikeForm): AnswerLikeView? {
         val answer = getByIdPure(answerLikeForm.answerId)
         val user = userService.getUserByIdPure(answerLikeForm.authorId)
@@ -101,6 +113,20 @@ class AnswerService(
         } else {
             answerRepository.deleteLike(answerLikeForm.authorId, answerLikeForm.answerId)
             return null
+        }
+    }
+
+    fun delete(id: Long, username: String) {
+        val user = userService.getUserByUsername(username)
+        val answer = getByIdPure(id)
+        if(answer.author?.id == user.id){
+            getAnswerByAnswerFatherPure(id).stream().forEach { child ->
+                answerRepository.deleteById(child.id)
+            }.let {
+                answerRepository.deleteById(id)
+            }
+        }else{
+            throw Exception("You can`t delete this answer!")
         }
     }
 }

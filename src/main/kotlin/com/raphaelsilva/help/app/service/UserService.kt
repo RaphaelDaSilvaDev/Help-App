@@ -73,6 +73,10 @@ class UserService(
         return userLikeViewMapper.map(userLikes.likedAnswers)
     }
 
+    fun getUserByUsername(username: String): User{
+        return userRepository.findByEmail(username) ?: throw NotFoundException(notFoundMessage)
+    }
+
     override fun loadUserByUsername(username: String?): UserDetails {
         val user = userRepository.findByEmail(username) ?: throw NotFoundException(notFoundMessage)
         return UserDetail(user)
