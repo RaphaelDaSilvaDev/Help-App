@@ -1,5 +1,6 @@
 package com.raphaelsilva.help.app.service
 
+import com.raphaelsilva.help.app.dto.form.AnswerEditForm
 import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
 import com.raphaelsilva.help.app.dto.view.AnswerLikeView
@@ -14,6 +15,7 @@ import com.raphaelsilva.help.app.mapper.answer.AnswerSimpleViewMapper
 import com.raphaelsilva.help.app.model.Answer
 import com.raphaelsilva.help.app.model.PostStatus
 import com.raphaelsilva.help.app.repository.AnswerRepository
+import io.jsonwebtoken.lang.Collections
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -70,6 +72,17 @@ class AnswerService(
         return answer
     }
 
+    fun getAllByPostIdPure(postId: Long): List<AnswerWithChildrenCountView> {
+        val answer = answerRepository.getAllByPostId(postId).stream().map { answer ->
+            val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
+            answersChildren?.let { child ->
+                val answersWhitChildren = AnswerWithChildren(answer, child)
+                answerWhitQuantityViewMapper.map(answersWhitChildren)
+            }
+        }.collect(Collectors.toList())
+        return answer
+    }
+
     fun getAnswerByAnswerFather(id: Long, pageable: Pageable): Page<AnswerWithChildrenCountView> {
         val answer = answerRepository.findAllByAnswerId(id, pageable).map { answer ->
             val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
@@ -78,6 +91,17 @@ class AnswerService(
                 answerWhitQuantityViewMapper.map(answersWhitChildren)
             }
         }
+        return answer
+    }
+
+    fun getAnswerByAnswerFatherPure(id: Long): List<AnswerWithChildrenCountView> {
+        val answer = answerRepository.findAllByAnswerId(id).stream().map { answer ->
+            val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
+            answersChildren?.let { child ->
+                val answersWhitChildren = AnswerWithChildren(answer, child)
+                answerWhitQuantityViewMapper.map(answersWhitChildren)
+            }
+        }.collect(Collectors.toList())
         return answer
     }
 
@@ -101,6 +125,49 @@ class AnswerService(
         } else {
             answerRepository.deleteLike(answerLikeForm.authorId, answerLikeForm.answerId)
             return null
+        }
+    }
+
+    fun delete(id: Long, username: String) {
+        val user = userService.getUserByUsername(username)
+        val answer = getByIdPure(id)
+        if(answer.author?.id == user.id){
+            getAnswerByAnswerFatherPure(id).stream().forEach { child ->
+                answerRepository.deleteById(child.id)
+            }.let {
+                answerRepository.deleteById(id)
+            }
+        }else{
+            throw Exception("You can`t delete this answer!")
+        }
+    }
+
+    fun deleteByPost(id: Long) {
+            getAnswerByAnswerFatherPure(id).stream().forEach { child ->
+                answerRepository.deleteById(child.id)
+            }.let {
+                answerRepository.deleteById(id)
+            }
+    }
+
+    fun updateById(id: Long, answerEditForm: AnswerEditForm, username: String): AnswerSimpleView {
+        val user = userService.getUserByUsername(username)
+        val answer = getByIdPure(id)
+
+        if(answer.author?.id == user.id){
+            val updatedAnswer = Answer(
+                id = answer.id,
+                message = answerEditForm.message,
+                answer = answer.answer,
+                post = answer.post,
+                isSolution = answer.isSolution,
+                likes = answer.likes,
+                author = answer.author,
+                createdAt = answer.createdAt
+            )
+            return answerSimpleViewMapper.map(answerRepository.save(updatedAnswer))
+        }else{
+            throw Exception("You can`t edit this answer!")
         }
     }
 }

@@ -19,6 +19,7 @@ data class User (
         @Column(nullable = false)
         var password: String = "",
 
+        @JsonIgnore
         @ManyToMany(mappedBy = "likes")
         val likedAnswers: List<Answer> = ArrayList(),
 

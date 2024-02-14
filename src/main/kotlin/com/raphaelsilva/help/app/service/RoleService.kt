@@ -36,4 +36,14 @@ class RoleService(
     fun deleteRole(id: Long) {
         roleRepository.deleteById(id)
     }
+
+    fun getRoleByNamePure(name: String): Roles{
+        return roleRepository.findByName(name)
+    }
+
+    fun getRoleByName(roleForm: RoleForm): RoleView{
+        val role = roleRepository.findByName(roleForm.name)
+        return roleViewMapper.map(role)
+    }
+
 }
