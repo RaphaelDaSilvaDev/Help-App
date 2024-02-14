@@ -51,8 +51,13 @@ class UserService(
         return userViewMapper.map(user)
     }
 
-    fun deleteUser(id: Long) {
-        userRepository.deleteById(id)
+    fun deleteUser(id: Long, username: String) {
+        val user = getUserById(id)
+        if(user.email == username){
+            userRepository.deleteById(id)
+        }else{
+            throw Exception("You can`t delete this user")
+        }
     }
 
     fun getAllUserLikes(userId: Long, postId: Long?, answerId: Long?): UserLikeView {

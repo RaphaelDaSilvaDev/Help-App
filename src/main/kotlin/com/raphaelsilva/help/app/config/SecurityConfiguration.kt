@@ -29,6 +29,7 @@ class SecurityConfiguration(
             it.requestMatchers(HttpMethod.POST, "/api/user").permitAll()
             it.requestMatchers(HttpMethod.POST, "/login").permitAll()
             it.requestMatchers(HttpMethod.PUT, "/api/answer/like").authenticated()
+            it.requestMatchers(HttpMethod.DELETE, "/api/user/**").hasAuthority("USER")
             it.anyRequest().permitAll()
         }.csrf {
             it.disable()
