@@ -1,5 +1,6 @@
 package com.raphaelsilva.help.app.service
 
+import com.raphaelsilva.help.app.dto.form.PostEditForm
 import com.raphaelsilva.help.app.dto.form.PostForm
 import com.raphaelsilva.help.app.dto.view.PostView
 import com.raphaelsilva.help.app.exception.NotFoundException
@@ -60,6 +61,27 @@ class PostService(
             }
         }else{
             throw Exception("You can`t delete this post!")
+        }
+    }
+
+    fun updateById(id: Long, postEditForm: PostEditForm, username: String): PostView {
+        val user = userRepository.findByEmail(username)
+        val post = getById(id)
+
+        if(post.createdBy?.id == user?.id){
+            val updatedPost = Post(
+                id = post.id,
+                title = postEditForm.title ?: post.title,
+                message = postEditForm.message ?: post.message,
+                tags = postEditForm.tags ?: post.tags,
+                status = post.status,
+                createdAt = post.createdAt,
+                createdBy = post.createdBy
+            )
+
+            return postViewMapper.map(postRepository.save(updatedPost))
+        }else{
+            throw Exception("You can`t edit this post!")
         }
     }
 

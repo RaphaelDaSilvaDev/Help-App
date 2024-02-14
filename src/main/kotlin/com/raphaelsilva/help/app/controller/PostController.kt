@@ -1,5 +1,6 @@
 package com.raphaelsilva.help.app.controller
 
+import com.raphaelsilva.help.app.dto.form.PostEditForm
 import com.raphaelsilva.help.app.dto.form.PostForm
 import com.raphaelsilva.help.app.dto.view.PostView
 import com.raphaelsilva.help.app.model.Post
@@ -41,5 +42,11 @@ class PostController(private val postService: PostService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id: Long, @AuthenticationPrincipal username: String){
         postService.delete(id, username)
+    }
+
+    @PatchMapping("/{id}")
+    fun updateById(@PathVariable id: Long, @RequestBody postEditForm: PostEditForm, @AuthenticationPrincipal username: String): ResponseEntity<PostView> {
+        val post = postService.updateById(id, postEditForm, username)
+        return ResponseEntity.ok().body(post)
     }
 }
