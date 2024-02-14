@@ -1,7 +1,9 @@
 package com.raphaelsilva.help.app.controller
 
+import com.raphaelsilva.help.app.dto.form.AnswerEditForm
 import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
+import com.raphaelsilva.help.app.dto.view.AnswerSimpleView
 import com.raphaelsilva.help.app.dto.view.AnswerWithChildrenCountView
 import com.raphaelsilva.help.app.dto.view.UserUnlikeView
 import com.raphaelsilva.help.app.service.AnswerService
@@ -66,5 +68,12 @@ class AnswerController(private val answerService: AnswerService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteAnswer(@PathVariable id: Long, @AuthenticationPrincipal username: String){
         answerService.delete(id, username)
+    }
+
+    @PatchMapping("/{id}")
+    fun updateById(@PathVariable id: Long, @RequestBody answerEditForm: AnswerEditForm, @AuthenticationPrincipal username:
+    String): ResponseEntity<AnswerSimpleView> {
+        val answer = answerService.updateById(id, answerEditForm, username)
+        return ResponseEntity.ok().body(answer)
     }
 }

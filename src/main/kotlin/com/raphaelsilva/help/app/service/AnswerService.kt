@@ -1,5 +1,6 @@
 package com.raphaelsilva.help.app.service
 
+import com.raphaelsilva.help.app.dto.form.AnswerEditForm
 import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
 import com.raphaelsilva.help.app.dto.view.AnswerLikeView
@@ -147,5 +148,26 @@ class AnswerService(
             }.let {
                 answerRepository.deleteById(id)
             }
+    }
+
+    fun updateById(id: Long, answerEditForm: AnswerEditForm, username: String): AnswerSimpleView {
+        val user = userService.getUserByUsername(username)
+        val answer = getByIdPure(id)
+
+        if(answer.author?.id == user.id){
+            val updatedAnswer = Answer(
+                id = answer.id,
+                message = answerEditForm.message,
+                answer = answer.answer,
+                post = answer.post,
+                isSolution = answer.isSolution,
+                likes = answer.likes,
+                author = answer.author,
+                createdAt = answer.createdAt
+            )
+            return answerSimpleViewMapper.map(answerRepository.save(updatedAnswer))
+        }else{
+            throw Exception("You can`t edit this answer!")
+        }
     }
 }
