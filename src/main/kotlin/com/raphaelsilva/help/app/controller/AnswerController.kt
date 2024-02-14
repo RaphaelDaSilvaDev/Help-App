@@ -1,7 +1,9 @@
 package com.raphaelsilva.help.app.controller
 
+import com.raphaelsilva.help.app.dto.form.AnswerEditForm
 import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
+import com.raphaelsilva.help.app.dto.view.AnswerSimpleView
 import com.raphaelsilva.help.app.dto.view.AnswerWithChildrenCountView
 import com.raphaelsilva.help.app.dto.view.UserUnlikeView
 import com.raphaelsilva.help.app.service.AnswerService
@@ -9,7 +11,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -58,5 +62,18 @@ class AnswerController(private val answerService: AnswerService) {
                 message = "Unliked", userId = answerLikeForm.authorId, answerId = answerLikeForm.answerId
             )
         )
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteAnswer(@PathVariable id: Long, @AuthenticationPrincipal username: String){
+        answerService.delete(id, username)
+    }
+
+    @PatchMapping("/{id}")
+    fun updateById(@PathVariable id: Long, @RequestBody answerEditForm: AnswerEditForm, @AuthenticationPrincipal username:
+    String): ResponseEntity<AnswerSimpleView> {
+        val answer = answerService.updateById(id, answerEditForm, username)
+        return ResponseEntity.ok().body(answer)
     }
 }

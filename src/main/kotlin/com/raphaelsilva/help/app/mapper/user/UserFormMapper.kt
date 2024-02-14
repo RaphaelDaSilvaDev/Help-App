@@ -15,7 +15,7 @@ class UserFormMapper(private val roleService: RoleService): Mapper<UserForm, Use
                 name = t.name,
                 email = t.email,
                 password = BCrypt.hashpw(t.password, BCrypt.gensalt()),
-                //role = arrayListOf(roleService.getRoleById(1))
+                role = arrayListOf(roleService.getRoleByNamePure("USER"))
         )
     }
 

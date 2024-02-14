@@ -1,7 +1,6 @@
 package com.raphaelsilva.help.app.controller
 
 import com.raphaelsilva.help.app.dto.form.UserForm
-import com.raphaelsilva.help.app.dto.form.UserLikeAnswer
 import com.raphaelsilva.help.app.dto.form.UserUpdateForm
 import com.raphaelsilva.help.app.dto.view.UserLikeView
 import com.raphaelsilva.help.app.dto.view.UserView
@@ -9,6 +8,7 @@ import com.raphaelsilva.help.app.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -43,8 +43,8 @@ class UserController(private val userService: UserService) {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteUser(@PathVariable id: Long) {
-        userService.deleteUser(id)
+    fun deleteUser(@PathVariable id: Long, @AuthenticationPrincipal username: String) {
+        userService.deleteUser(id, username)
     }
 
     @GetMapping("/like")
