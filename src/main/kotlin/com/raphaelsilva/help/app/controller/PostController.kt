@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -33,5 +35,11 @@ class PostController(private val postService: PostService) {
     @GetMapping("/{id}")
     fun getPostById(@PathVariable id: Long): Post {
         return postService.getById(id)
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id: Long, @AuthenticationPrincipal username: String){
+        postService.delete(id, username)
     }
 }

@@ -71,6 +71,17 @@ class AnswerService(
         return answer
     }
 
+    fun getAllByPostIdPure(postId: Long): List<AnswerWithChildrenCountView> {
+        val answer = answerRepository.getAllByPostId(postId).stream().map { answer ->
+            val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
+            answersChildren?.let { child ->
+                val answersWhitChildren = AnswerWithChildren(answer, child)
+                answerWhitQuantityViewMapper.map(answersWhitChildren)
+            }
+        }.collect(Collectors.toList())
+        return answer
+    }
+
     fun getAnswerByAnswerFather(id: Long, pageable: Pageable): Page<AnswerWithChildrenCountView> {
         val answer = answerRepository.findAllByAnswerId(id, pageable).map { answer ->
             val answersChildren = answer.id?.let { answerId -> getAllChildrenById(answerId) }
@@ -128,5 +139,13 @@ class AnswerService(
         }else{
             throw Exception("You can`t delete this answer!")
         }
+    }
+
+    fun deleteByPost(id: Long) {
+            getAnswerByAnswerFatherPure(id).stream().forEach { child ->
+                answerRepository.deleteById(child.id)
+            }.let {
+                answerRepository.deleteById(id)
+            }
     }
 }
