@@ -3,6 +3,7 @@ package com.raphaelsilva.help.app.service
 import com.raphaelsilva.help.app.dto.form.AnswerEditForm
 import com.raphaelsilva.help.app.dto.form.AnswerForm
 import com.raphaelsilva.help.app.dto.form.AnswerLikeForm
+import com.raphaelsilva.help.app.dto.form.RoleForm
 import com.raphaelsilva.help.app.dto.view.AnswerLikeView
 import com.raphaelsilva.help.app.dto.view.AnswerSimpleView
 import com.raphaelsilva.help.app.dto.view.AnswerWithChildren
@@ -14,6 +15,7 @@ import com.raphaelsilva.help.app.mapper.answer.AnswerLikeViewMapper
 import com.raphaelsilva.help.app.mapper.answer.AnswerSimpleViewMapper
 import com.raphaelsilva.help.app.model.Answer
 import com.raphaelsilva.help.app.model.PostStatus
+import com.raphaelsilva.help.app.model.Roles
 import com.raphaelsilva.help.app.repository.AnswerRepository
 import io.jsonwebtoken.lang.Collections
 import org.springframework.data.domain.Page
@@ -26,6 +28,7 @@ class AnswerService(
     private val answerRepository: AnswerRepository,
     private val postService: PostService,
     private val userService: UserService,
+    private val rolesService: RoleService,
     private val answerFormMapper: AnswerFormMapper,
     private val answerLikeViewMapper: AnswerLikeViewMapper,
     private val answerWhitQuantityViewMapper: AnswerCompleteViewMapper,
@@ -131,7 +134,8 @@ class AnswerService(
     fun delete(id: Long, username: String) {
         val user = userService.getUserByUsername(username)
         val answer = getByIdPure(id)
-        if(answer.author?.id == user.id){
+        val adminRole = rolesService.getRoleByNamePure("ADMIN")
+        if(answer.author?.id == user.id || user.role.contains(adminRole)){
             getAnswerByAnswerFatherPure(id).stream().forEach { child ->
                 answerRepository.deleteById(child.id)
             }.let {
