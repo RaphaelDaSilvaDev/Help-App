@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service
 class PostService(
     private val postRepository: PostRepository,
     @Lazy private val answerService: AnswerService,
+    private val roleService: RoleService,
     private val postFormMapper: PostFormMapper,
     private val postViewMapper: PostViewMapper,
     private val notFoundMessage: String = "Post not found!", private val userRepository: UserRepository
@@ -52,8 +53,9 @@ class PostService(
 
     fun delete(id: Long, username: String) {
         val user = userRepository.findByEmail(username)
+        val adminRole = roleService.getRoleByNamePure("ADMIN")
         val post = getById(id)
-        if(post.createdBy?.id == user?.id){
+        if(post.createdBy?.id == user?.id || user?.role?.contains(adminRole) == true){
             answerService.getAllByPostIdPure(id).stream().forEach { answer ->
                 answerService.deleteByPost(answer.id)
             }.let {
